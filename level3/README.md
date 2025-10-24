@@ -1,6 +1,6 @@
 # Level3: FORMAT STRING
 
-Première étape — tester le programme
+### Première étape — tester le programme
 
 ```bash
 $ ./level3
